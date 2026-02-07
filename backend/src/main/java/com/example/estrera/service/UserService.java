@@ -114,8 +114,6 @@ public class UserService {
                 .email(user.getEmail())
                 .isActive(user.getIs_active())
                 .enabled(user.isEnabled())
-                .lastLogin(user.getLast_login())
-                .createdAt(user.getCreated_at())
                 .build();
     }
 }
