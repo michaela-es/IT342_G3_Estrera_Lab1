@@ -49,7 +49,7 @@ function App() {
         <form onSubmit={handleSubmit} className="auth-form">
           {!isLogin && (
             <div className="form-group">
-              <label htmlFor="name">Full Name</label>
+              <label htmlFor="name">Username</label>
               <input
                 type="text"
                 id="name"
@@ -129,11 +129,7 @@ function App() {
             </button>
           </p>
           
-          {!isLogin && (
-            <p className="terms-text">
-              By signing up, you agree to our <a href="#">Terms</a> and <a href="#">Privacy Policy</a>
-            </p>
-          )}
+    
         </div>
       </div>
     </div>
