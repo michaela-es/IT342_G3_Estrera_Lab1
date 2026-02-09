@@ -3,12 +3,15 @@ package com.example.estrera.service;
 import com.example.estrera.dto.*;
 import com.example.estrera.entity.User;
 import com.example.estrera.repository.UserRepository;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
+import java.util.Map;
+import java.util.UUID;
 
 @Service
 public class UserService {
@@ -26,38 +29,34 @@ public class UserService {
         this.refreshTokenService = refreshTokenService;
     }
 
-    @Transactional
-    public AuthResponse register(RegisterRequest request) {
-        if (userRepository.existsByEmail(request.getEmail())) {
-            throw new IllegalArgumentException("Email already exists");
-        }
-
+    public Map<String, Object> register(RegisterRequest request) {
         if (userRepository.existsByUsername(request.getUsername())) {
             throw new IllegalArgumentException("Username already exists");
+        }
+        if (userRepository.existsByEmail(request.getEmail())) {
+            throw new IllegalArgumentException("Email already registered");
         }
 
         User user = new User();
         user.setUsername(request.getUsername());
         user.setEmail(request.getEmail());
         user.setPassword(passwordEncoder.encode(request.getPassword()));
-        user.setIs_active(true);
         user.setEnabled(false);
-        user.setCreated_at(LocalDateTime.now());
+        user.setIs_active(true);
 
-        User savedUser = userRepository.save(user);
+        user = userRepository.save(user);
 
-        String accessToken = jwtService.generateToken(savedUser.getUser_id(), savedUser.getEmail());
-        String refreshToken = refreshTokenService.createRefreshToken(savedUser.getUser_id(), savedUser.getEmail());
+//        String verificationToken = UUID.randomUUID().toString();
+//        user.setVerificationToken(verificationToken);
+        userRepository.save(user);
 
-        UserResponse userResponse = mapToUserResponse(savedUser);
+//        emailService.sendVerificationEmail(user.getEmail(), verificationToken);
 
-        return AuthResponse.builder()
-                .accessToken(accessToken)
-                .refreshToken(refreshToken)
-                .tokenType("Bearer")
-                .expiresIn(86400L)
-                .user(userResponse)
-                .build();
+        return Map.of(
+                "message", "Registration successful! Please verify your email.",
+                "userId", user.getUser_id(),
+                "email", user.getEmail()
+        );
     }
 
     public AuthResponse login(LoginRequest request) {
@@ -77,7 +76,7 @@ public class UserService {
             throw new IllegalArgumentException("Invalid credentials");
         }
 
-        if (!user.isEnabled()) {
+        if (!user.getEnabled()) {
             throw new IllegalArgumentException("Account not verified");
         }
 
