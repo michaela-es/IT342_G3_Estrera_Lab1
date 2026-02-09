@@ -10,11 +10,15 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
 @Service
-@RequiredArgsConstructor
 public class AuthService {
 
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
+
+    public AuthService (UserRepository userRepository,PasswordEncoder passwordEncoder ){
+        this.userRepository = userRepository;
+        this.passwordEncoder = passwordEncoder;
+    }
 
     public User authenticateUser(String usernameOrEmail, String password) {
         if (!StringUtils.hasText(usernameOrEmail) || !StringUtils.hasText(password)) {

@@ -38,6 +38,70 @@ public class User {
     @Column(nullable = false)
     private Boolean enabled = true;
 
+    public void setUser_id(Long user_id) {
+        this.user_id = user_id;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
+    public void setUsername(String username) {
+        this.username = username;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
+    }
+
+    public void setIs_active(Boolean is_active) {
+        this.is_active = is_active;
+    }
+
+    public void setEnabled(Boolean enabled) {
+        this.enabled = enabled;
+    }
+
+    public void setCreated_at(LocalDateTime created_at) {
+        this.created_at = created_at;
+    }
+
+    public Long getUser_id() {
+        return user_id;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public String getUsername() {
+        return username;
+    }
+
+    public String getPassword() {
+        return password;
+    }
+
+    public LocalDateTime getLast_login() {
+        return last_login;
+    }
+
+    public void setLast_login(LocalDateTime last_login) {
+        this.last_login = last_login;
+    }
+
+    public Boolean getIs_active() {
+        return is_active;
+    }
+
+    public LocalDateTime getCreated_at() {
+        return created_at;
+    }
+
+    public Boolean getEnabled() {
+        return enabled;
+    }
+
     public boolean isEnabled() {
         return enabled;
     }

@@ -3,8 +3,6 @@ package com.example.estrera.service;
 import com.example.estrera.entity.RefreshToken;
 import com.example.estrera.entity.User;
 import com.example.estrera.repository.RefreshTokenRepository;
-import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -12,8 +10,6 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDateTime;
 
 @Service
-@Slf4j
-@RequiredArgsConstructor
 public class RefreshTokenService {
 
     private final RefreshTokenRepository refreshTokenRepository;
@@ -22,21 +18,26 @@ public class RefreshTokenService {
     @Value("${jwt.refresh-expiration}")
     private Long refreshTokenExpirationMs;
 
+    public RefreshTokenService(RefreshTokenRepository refreshTokenRepository, JwtService jwtService) {
+        this.refreshTokenRepository = refreshTokenRepository;
+        this.jwtService = jwtService;
+    }
+
     @Transactional
     public String createRefreshToken(Long userId, String email) {
-        User user = User.builder().user_id(userId).build();
+        User user = new User();
+        user.setUser_id(userId);
 
         revokeAllUserTokens(userId);
 
         String token = jwtService.generateRefreshToken(userId, email);
 
-        RefreshToken refreshToken = RefreshToken.builder()
-                .user(user)
-                .tokenHash(hashToken(token))  // Hash the token before storing
-                .issuedAt(LocalDateTime.now())
-                .expiresAt(LocalDateTime.now().plusSeconds(refreshTokenExpirationMs))
-                .revokedAt(null)
-                .build();
+        RefreshToken refreshToken = new RefreshToken();
+        refreshToken.setUser(user);
+        refreshToken.setTokenHash(hashToken(token));
+        refreshToken.setIssuedAt(LocalDateTime.now());
+        refreshToken.setExpiresAt(LocalDateTime.now().plusSeconds(refreshTokenExpirationMs));
+        refreshToken.setRevokedAt(null);
 
         refreshTokenRepository.save(refreshToken);
         return token;
@@ -85,10 +86,6 @@ public class RefreshTokenService {
     }
 
     private String hashToken(String token) {
-        // Simple hash - use BCrypt or SHA-256 in production
         return Integer.toHexString(token.hashCode());
-
-        // Better: Use BCrypt
-        // return BCrypt.hashpw(token, BCrypt.gensalt());
     }
 }

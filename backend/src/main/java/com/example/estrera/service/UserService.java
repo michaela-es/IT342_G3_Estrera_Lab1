@@ -3,8 +3,6 @@ package com.example.estrera.service;
 import com.example.estrera.dto.*;
 import com.example.estrera.entity.User;
 import com.example.estrera.repository.UserRepository;
-import lombok.RequiredArgsConstructor;
-import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -13,7 +11,6 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDateTime;
 
 @Service
-@RequiredArgsConstructor
 public class UserService {
 
     private final UserRepository userRepository;
@@ -21,9 +18,16 @@ public class UserService {
     private final JwtService jwtService;
     private final RefreshTokenService refreshTokenService;
 
+    public UserService(UserRepository userRepository, PasswordEncoder passwordEncoder,
+                       JwtService jwtService, RefreshTokenService refreshTokenService) {
+        this.userRepository = userRepository;
+        this.passwordEncoder = passwordEncoder;
+        this.jwtService = jwtService;
+        this.refreshTokenService = refreshTokenService;
+    }
+
     @Transactional
     public AuthResponse register(RegisterRequest request) {
-        // Check if user exists
         if (userRepository.existsByEmail(request.getEmail())) {
             throw new IllegalArgumentException("Email already exists");
         }
@@ -32,33 +36,31 @@ public class UserService {
             throw new IllegalArgumentException("Username already exists");
         }
 
-        // Create user
-        User user = User.builder()
-                .username(request.getUsername())
-                .email(request.getEmail())
-                .password(passwordEncoder.encode(request.getPassword()))
-                .is_active(true)
-                .enabled(true) // Set to true if no email verification
-                .created_at(LocalDateTime.now())
-                .build();
+        User user = new User();
+        user.setUsername(request.getUsername());
+        user.setEmail(request.getEmail());
+        user.setPassword(passwordEncoder.encode(request.getPassword()));
+        user.setIs_active(true);
+        user.setEnabled(false);
+        user.setCreated_at(LocalDateTime.now());
 
         User savedUser = userRepository.save(user);
 
-        // Generate tokens
         String accessToken = jwtService.generateToken(savedUser.getUser_id(), savedUser.getEmail());
         String refreshToken = refreshTokenService.createRefreshToken(savedUser.getUser_id(), savedUser.getEmail());
+
+        UserResponse userResponse = mapToUserResponse(savedUser);
 
         return AuthResponse.builder()
                 .accessToken(accessToken)
                 .refreshToken(refreshToken)
                 .tokenType("Bearer")
-                .expiresIn(86400L) // 24 hours
-                .user(mapToUserResponse(savedUser))
+                .expiresIn(86400L)
+                .user(userResponse)
                 .build();
     }
 
     public AuthResponse login(LoginRequest request) {
-        // Find user by username or email
         User user = userRepository.findByUsername(request.getUsernameOrEmail())
                 .orElseGet(() -> {
                     if (request.getUsernameOrEmail().contains("@")) {
@@ -79,20 +81,20 @@ public class UserService {
             throw new IllegalArgumentException("Account not verified");
         }
 
-        // Update last login
         user.setLast_login(LocalDateTime.now());
         userRepository.save(user);
 
-        // Generate tokens
         String accessToken = jwtService.generateToken(user.getUser_id(), user.getEmail());
         String refreshToken = refreshTokenService.createRefreshToken(user.getUser_id(), user.getEmail());
+
+        UserResponse userResponse = mapToUserResponse(user);
 
         return AuthResponse.builder()
                 .accessToken(accessToken)
                 .refreshToken(refreshToken)
                 .tokenType("Bearer")
                 .expiresIn(86400L)
-                .user(mapToUserResponse(user))
+                .user(userResponse)
                 .build();
     }
 
