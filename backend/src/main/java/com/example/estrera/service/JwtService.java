@@ -23,12 +23,12 @@ public class JwtService {
     @Value("${jwt.refresh-expiration}")
     private Long refreshExpiration;
 
-    public String extractUsername(String token) {
-        return extractClaim(token, claims -> claims.get("email", String.class));
-    }
-
     public Long extractUserId(String token) {
         return extractClaim(token, claims -> claims.get("userId", Long.class));
+    }
+
+    public String extractTokenType(String token) {
+        return extractClaim(token, claims -> claims.get("type", String.class));
     }
 
     public <T> T extractClaim(String token, Function<Claims, T> claimsResolver) {
@@ -36,31 +36,30 @@ public class JwtService {
         return claimsResolver.apply(claims);
     }
 
-    public String generateToken(Long userId, String email) {
-        System.out.println("DEBUG: Generating token for userId=" + userId + ", email=" + email);
+    public String generateAccessToken(Long userId) {
+        System.out.println("DEBUG: Generating access token for userId=" + userId);
 
         try {
             return Jwts.builder()
                     .claim("userId", userId)
-                    .claim("email", email)
+                    .claim("type", "access")
                     .issuedAt(new Date(System.currentTimeMillis()))
                     .expiration(new Date(System.currentTimeMillis() + jwtExpiration))
                     .signWith(getSignInKey(), Jwts.SIG.HS256)
                     .compact();
         } catch (Exception e) {
-            System.err.println("ERROR generating token: " + e.getMessage());
+            System.err.println("ERROR generating access token: " + e.getMessage());
             e.printStackTrace();
-            throw new RuntimeException("Failed to generate JWT token", e);
+            throw new RuntimeException("Failed to generate access token", e);
         }
     }
 
-    public String generateRefreshToken(Long userId, String email) {
+    public String generateRefreshToken(Long userId) {
         System.out.println("DEBUG: Generating refresh token for userId=" + userId);
 
         try {
             return Jwts.builder()
                     .claim("userId", userId)
-                    .claim("email", email)
                     .claim("type", "refresh")
                     .issuedAt(new Date(System.currentTimeMillis()))
                     .expiration(new Date(System.currentTimeMillis() + refreshExpiration))
@@ -73,11 +72,43 @@ public class JwtService {
         }
     }
 
+    public String generateVerificationToken(String email) {
+        System.out.println("DEBUG: Generating verification token for email=" + email);
+
+        try {
+            return Jwts.builder()
+                    .claim("email", email)
+                    .claim("type", "verification")
+                    .issuedAt(new Date(System.currentTimeMillis()))
+                    .expiration(new Date(System.currentTimeMillis() + 900000))
+                    .signWith(getSignInKey(), Jwts.SIG.HS256)
+                    .compact();
+        } catch (Exception e) {
+            System.err.println("ERROR generating verification token: " + e.getMessage());
+            e.printStackTrace();
+            throw new RuntimeException("Failed to generate verification token", e);
+        }
+    }
+
+
+    public String extractEmail(String token) {
+        return extractClaim(token, claims -> claims.get("email", String.class));
+    }
+
     public boolean isTokenValid(String token) {
         try {
             return !isTokenExpired(token);
         } catch (Exception e) {
             System.err.println("Token validation error: " + e.getMessage());
+            return false;
+        }
+    }
+
+    public boolean isTokenType(String token, String expectedType) {
+        try {
+            String type = extractTokenType(token);
+            return expectedType.equals(type);
+        } catch (Exception e) {
             return false;
         }
     }
@@ -97,13 +128,10 @@ public class JwtService {
 
     private SecretKey getSignInKey() {
         try {
-            System.out.println("DEBUG: Secret key: " + (secretKey != null ? secretKey.substring(0, Math.min(20, secretKey.length())) + "..." : "null"));
             byte[] keyBytes = Decoders.BASE64.decode(secretKey);
-            System.out.println("DEBUG: Key bytes length: " + keyBytes.length);
             return Keys.hmacShaKeyFor(keyBytes);
         } catch (Exception e) {
             System.err.println("ERROR in getSignInKey: " + e.getMessage());
-            System.err.println("Secret key: " + secretKey);
             throw new RuntimeException("Invalid JWT secret key", e);
         }
     }

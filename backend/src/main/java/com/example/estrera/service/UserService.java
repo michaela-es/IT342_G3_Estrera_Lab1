@@ -83,8 +83,8 @@ public class UserService {
         user.setLast_login(LocalDateTime.now());
         userRepository.save(user);
 
-        String accessToken = jwtService.generateToken(user.getUser_id(), user.getEmail());
-        String refreshToken = refreshTokenService.createRefreshToken(user.getUser_id(), user.getEmail());
+        String accessToken = jwtService.generateAccessToken(user.getUser_id());
+        String refreshToken = refreshTokenService.createRefreshToken(user.getUser_id());
 
         UserResponse userResponse = mapToUserResponse(user);
 
