@@ -15,7 +15,7 @@ public class RefreshTokenService {
     private final RefreshTokenRepository refreshTokenRepository;
     private final JwtService jwtService;
 
-    @Value("${jwt.refresh-expiration}")
+    @Value("${jwt.refresh.expiration}")
     private Long refreshTokenExpirationMs;
 
     public RefreshTokenService(RefreshTokenRepository refreshTokenRepository, JwtService jwtService) {
@@ -99,5 +99,11 @@ public class RefreshTokenService {
         } catch (java.security.NoSuchAlgorithmException e) {
             throw new RuntimeException("Error hashing token", e);
         }
+    }
+
+    @Transactional
+    public void revokeUserTokens(Long userId) {
+        refreshTokenRepository.revokeAllUserTokens(userId);
+
     }
 }

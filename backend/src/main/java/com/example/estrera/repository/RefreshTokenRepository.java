@@ -15,15 +15,15 @@ public interface RefreshTokenRepository extends JpaRepository<RefreshToken, Long
 
     Optional<RefreshToken> findByTokenHash(String tokenHash);
 
-
-    @Query("SELECT rt FROM RefreshToken rt WHERE rt.user.user_id = :userId")
+    @Query("SELECT rt FROM RefreshToken rt WHERE rt.user.id = :userId")
     List<RefreshToken> findByUserId(@Param("userId") Long userId);
 
     @Modifying
-    @Query("DELETE FROM RefreshToken rt WHERE rt.user.user_id = :userId AND rt.revokedAt IS NOT NULL")
+    @Query("DELETE FROM RefreshToken rt WHERE rt.user.id = :userId AND rt.revokedAt IS NOT NULL")
     void deleteRevokedTokensByUserId(@Param("userId") Long userId);
 
     @Modifying
-    @Query("UPDATE RefreshToken rt SET rt.revokedAt = CURRENT_TIMESTAMP WHERE rt.user.user_id = :userId AND rt.revokedAt IS NULL")
+    @Query("UPDATE RefreshToken rt SET rt.revokedAt = CURRENT_TIMESTAMP WHERE rt.user.id = :userId AND rt.revokedAt IS NULL")
     void revokeAllUserTokens(@Param("userId") Long userId);
+
 }

@@ -13,7 +13,6 @@ import java.util.Collections;
 
 @RestController
 @RequestMapping("/api")
-@CrossOrigin(origins = "*")
 public class UserController {
 
     private final UserRepository userRepository;
@@ -30,7 +29,8 @@ public class UserController {
             User user = securityUtil.getCurrentUser();
             ProfileResponse response = new ProfileResponse(
                     user.getUsername(),
-                    user.getEnabled()
+                    user.getEnabled(),
+                    user.getEmail()
             );
             return ResponseEntity.ok(response);
         } catch (RuntimeException e) {

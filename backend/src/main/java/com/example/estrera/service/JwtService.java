@@ -17,10 +17,10 @@ public class JwtService {
     @Value("${jwt.secret}")
     private String secretKey;
 
-    @Value("${jwt.expiration}")
+    @Value("${jwt.access.expiration}")
     private Long jwtExpiration;
 
-    @Value("${jwt.refresh-expiration}")
+    @Value("${jwt.refresh.expiration}")
     private Long refreshExpiration;
 
     public Long extractUserId(String token) {

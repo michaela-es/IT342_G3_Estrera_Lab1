@@ -3,13 +3,15 @@ package com.example.estrera.dto;
 public class ProfileResponse {
     private String username;
     private Boolean enabled;
+    private String email;
 
     public ProfileResponse() {
     }
 
-    public ProfileResponse(String username, Boolean enabled) {
+    public ProfileResponse(String username, Boolean enabled, String email) {
         this.username = username;
         this.enabled = enabled;
+        this.email = email;
     }
 
     public String getUsername() {
@@ -18,6 +20,14 @@ public class ProfileResponse {
 
     public void setUsername(String username) {
         this.username = username;
+    }
+
+    public void setEmail(String email){
+        this.email = email;
+    }
+
+    public String getEmail(){
+        return email;
     }
 
     public Boolean getEnabled() {

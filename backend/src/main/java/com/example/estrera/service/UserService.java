@@ -117,4 +117,10 @@ public class UserService {
                 .enabled(user.isEnabled())
                 .build();
     }
+
+    public User findById(Long userId) {
+        return userRepository.findById(userId)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+    }
+
 }

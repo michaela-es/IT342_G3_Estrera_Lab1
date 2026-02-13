@@ -39,53 +39,25 @@ public class RefreshToken {
         this.revokedAt = revokedAt;
     }
 
-    public Long getId() {
-        return id;
-    }
+    // Getters
+    public Long getId() { return id; }
+    public User getUser() { return user; }
+    public String getTokenHash() { return tokenHash; }
+    public LocalDateTime getIssuedAt() { return issuedAt; }
+    public LocalDateTime getExpiresAt() { return expiresAt; }
+    public LocalDateTime getRevokedAt() { return revokedAt; }
 
-    public User getUser() {
-        return user;
-    }
+    // Setters
+    public void setId(Long id) { this.id = id; }
+    public void setUser(User user) { this.user = user; }
+    public void setTokenHash(String tokenHash) { this.tokenHash = tokenHash; }
+    public void setIssuedAt(LocalDateTime issuedAt) { this.issuedAt = issuedAt; }
+    public void setExpiresAt(LocalDateTime expiresAt) { this.expiresAt = expiresAt; }
+    public void setRevokedAt(LocalDateTime revokedAt) { this.revokedAt = revokedAt; }
 
-    public String getTokenHash() {
-        return tokenHash;
-    }
-
-    public LocalDateTime getIssuedAt() {
-        return issuedAt;
-    }
-
-    public LocalDateTime getExpiresAt() {
-        return expiresAt;
-    }
-
-    public LocalDateTime getRevokedAt() {
-        return revokedAt;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public void setUser(User user) {
-        this.user = user;
-    }
-
-    public void setTokenHash(String tokenHash) {
-        this.tokenHash = tokenHash;
-    }
-
-    public void setIssuedAt(LocalDateTime issuedAt) {
-        this.issuedAt = issuedAt;
-    }
-
-    public void setExpiresAt(LocalDateTime expiresAt) {
-        this.expiresAt = expiresAt;
-    }
-
-    public void setRevokedAt(LocalDateTime revokedAt) {
-        this.revokedAt = revokedAt;
-    }
+    // ❌ REMOVE these broken methods:
+    // public void setToken(String token) { this. }
+    // public void setExpiryDate(Date date) { }
 
     public static Builder builder() {
         return new Builder();
@@ -99,35 +71,12 @@ public class RefreshToken {
         private LocalDateTime expiresAt;
         private LocalDateTime revokedAt;
 
-        public Builder id(Long id) {
-            this.id = id;
-            return this;
-        }
-
-        public Builder user(User user) {
-            this.user = user;
-            return this;
-        }
-
-        public Builder tokenHash(String tokenHash) {
-            this.tokenHash = tokenHash;
-            return this;
-        }
-
-        public Builder issuedAt(LocalDateTime issuedAt) {
-            this.issuedAt = issuedAt;
-            return this;
-        }
-
-        public Builder expiresAt(LocalDateTime expiresAt) {
-            this.expiresAt = expiresAt;
-            return this;
-        }
-
-        public Builder revokedAt(LocalDateTime revokedAt) {
-            this.revokedAt = revokedAt;
-            return this;
-        }
+        public Builder id(Long id) { this.id = id; return this; }
+        public Builder user(User user) { this.user = user; return this; }
+        public Builder tokenHash(String tokenHash) { this.tokenHash = tokenHash; return this; }
+        public Builder issuedAt(LocalDateTime issuedAt) { this.issuedAt = issuedAt; return this; }
+        public Builder expiresAt(LocalDateTime expiresAt) { this.expiresAt = expiresAt; return this; }
+        public Builder revokedAt(LocalDateTime revokedAt) { this.revokedAt = revokedAt; return this; }
 
         public RefreshToken build() {
             return new RefreshToken(id, user, tokenHash, issuedAt, expiresAt, revokedAt);
