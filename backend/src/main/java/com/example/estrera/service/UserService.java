@@ -3,17 +3,17 @@ package com.example.estrera.service;
 import com.example.estrera.dto.*;
 import com.example.estrera.entity.User;
 import com.example.estrera.repository.UserRepository;
-import lombok.RequiredArgsConstructor;
-import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
+import java.util.Map;
+import java.util.UUID;
 
 @Service
-@RequiredArgsConstructor
 public class UserService {
 
     private final UserRepository userRepository;
@@ -21,44 +21,45 @@ public class UserService {
     private final JwtService jwtService;
     private final RefreshTokenService refreshTokenService;
 
-    @Transactional
-    public AuthResponse register(RegisterRequest request) {
-        // Check if user exists
-        if (userRepository.existsByEmail(request.getEmail())) {
-            throw new IllegalArgumentException("Email already exists");
-        }
+    public UserService(UserRepository userRepository, PasswordEncoder passwordEncoder,
+                       JwtService jwtService, RefreshTokenService refreshTokenService) {
+        this.userRepository = userRepository;
+        this.passwordEncoder = passwordEncoder;
+        this.jwtService = jwtService;
+        this.refreshTokenService = refreshTokenService;
+    }
 
+    public Map<String, Object> register(RegisterRequest request) {
         if (userRepository.existsByUsername(request.getUsername())) {
             throw new IllegalArgumentException("Username already exists");
         }
+        if (userRepository.existsByEmail(request.getEmail())) {
+            throw new IllegalArgumentException("Email already registered");
+        }
 
-        // Create user
-        User user = User.builder()
-                .username(request.getUsername())
-                .email(request.getEmail())
-                .password(passwordEncoder.encode(request.getPassword()))
-                .is_active(true)
-                .enabled(true) // Set to true if no email verification
-                .created_at(LocalDateTime.now())
-                .build();
+        User user = new User();
+        user.setUsername(request.getUsername());
+        user.setEmail(request.getEmail());
+        user.setPassword(passwordEncoder.encode(request.getPassword()));
+        user.setEnabled(false);
+        user.setIs_active(true);
 
-        User savedUser = userRepository.save(user);
+        user = userRepository.save(user);
 
-        // Generate tokens
-        String accessToken = jwtService.generateToken(savedUser.getUser_id(), savedUser.getEmail());
-        String refreshToken = refreshTokenService.createRefreshToken(savedUser.getUser_id(), savedUser.getEmail());
+//        String verificationToken = UUID.randomUUID().toString();
+//        user.setVerificationToken(verificationToken);
+        userRepository.save(user);
 
-        return AuthResponse.builder()
-                .accessToken(accessToken)
-                .refreshToken(refreshToken)
-                .tokenType("Bearer")
-                .expiresIn(86400L) // 24 hours
-                .user(mapToUserResponse(savedUser))
-                .build();
+//        emailService.sendVerificationEmail(user.getEmail(), verificationToken);
+
+        return Map.of(
+                "message", "Registration successful! Please verify your email.",
+                "userId", user.getUser_id(),
+                "email", user.getEmail()
+        );
     }
 
     public AuthResponse login(LoginRequest request) {
-        // Find user by username or email
         User user = userRepository.findByUsername(request.getUsernameOrEmail())
                 .orElseGet(() -> {
                     if (request.getUsernameOrEmail().contains("@")) {
@@ -75,24 +76,24 @@ public class UserService {
             throw new IllegalArgumentException("Invalid credentials");
         }
 
-        if (!user.isEnabled()) {
+        if (!user.getEnabled()) {
             throw new IllegalArgumentException("Account not verified");
         }
 
-        // Update last login
         user.setLast_login(LocalDateTime.now());
         userRepository.save(user);
 
-        // Generate tokens
         String accessToken = jwtService.generateToken(user.getUser_id(), user.getEmail());
         String refreshToken = refreshTokenService.createRefreshToken(user.getUser_id(), user.getEmail());
+
+        UserResponse userResponse = mapToUserResponse(user);
 
         return AuthResponse.builder()
                 .accessToken(accessToken)
                 .refreshToken(refreshToken)
                 .tokenType("Bearer")
                 .expiresIn(86400L)
-                .user(mapToUserResponse(user))
+                .user(userResponse)
                 .build();
     }
 

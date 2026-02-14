@@ -1,17 +1,72 @@
-A full-stack application 
 
-Springboot for back-end and React for front-end with MySQL for back-end
-Navigate to backend directory and run the EstreraApplication.java file
+An application with Spring Boot backend and React frontend for user authentication.
+---
 
-Navigate to frontend directory and enter npm run dev in the terminal
+## Backend Setup
 
-Steps to run mobile app
+```bash
+cd backend
 
+# Configure your database in application.properties
 
-ENDPOINTS
+# Build and run the backend
+mvn clean install
+mvn spring-boot:run
 
- /api/auth/register
+# Or run directly via IDE: EstreraApplication.java
+```
 
- /api/auth/login
+---
 
- /api/user/me (protected)
+## Frontend Setup
+
+```bash
+cd frontend
+
+# Install dependencies
+npm install
+
+# Run the frontend
+npm run dev
+```
+
+---
+
+## API Endpoints
+
+### 1. Register a new user
+
+**POST** `/api/auth/register`
+
+```bash
+curl -X POST http://localhost:8080/api/auth/register \
+  -H "Content-Type: application/json" \
+  -d '{
+        "username": "your_username",
+        "email": "your_email@example.com",
+        "password": "YourSecurePass123!"
+      }'
+```
+
+---
+
+### 2. Login
+
+**POST** `/api/auth/login`
+
+```bash
+curl -X POST http://localhost:8080/api/auth/login \
+  -H "Content-Type: application/json" \
+  -d '{
+        "usernameOrEmail": "your_username",
+        "password": "YourSecurePass123!"
+      }'
+```
+
+---
+
+### 3. Get current user (protected)
+
+**GET** `/api/user/me`
+
+TBA
