@@ -15,7 +15,7 @@ public class RefreshTokenService {
     private final RefreshTokenRepository refreshTokenRepository;
     private final JwtService jwtService;
 
-    @Value("${jwt.refresh-expiration}")
+    @Value("${jwt.refresh.expiration}")
     private Long refreshTokenExpirationMs;
 
     public RefreshTokenService(RefreshTokenRepository refreshTokenRepository, JwtService jwtService) {
@@ -24,19 +24,19 @@ public class RefreshTokenService {
     }
 
     @Transactional
-    public String createRefreshToken(Long userId, String email) {
+    public String createRefreshToken(Long userId) {
         User user = new User();
         user.setUser_id(userId);
 
         revokeAllUserTokens(userId);
 
-        String token = jwtService.generateRefreshToken(userId, email);
+        String token = jwtService.generateRefreshToken(userId);
 
         RefreshToken refreshToken = new RefreshToken();
         refreshToken.setUser(user);
         refreshToken.setTokenHash(hashToken(token));
         refreshToken.setIssuedAt(LocalDateTime.now());
-        refreshToken.setExpiresAt(LocalDateTime.now().plusSeconds(refreshTokenExpirationMs));
+        refreshToken.setExpiresAt(LocalDateTime.now().plusSeconds(refreshTokenExpirationMs / 1000));
         refreshToken.setRevokedAt(null);
 
         refreshTokenRepository.save(refreshToken);
@@ -86,6 +86,24 @@ public class RefreshTokenService {
     }
 
     private String hashToken(String token) {
-        return Integer.toHexString(token.hashCode());
+        try {
+            java.security.MessageDigest digest = java.security.MessageDigest.getInstance("SHA-256");
+            byte[] hash = digest.digest(token.getBytes(java.nio.charset.StandardCharsets.UTF_8));
+            StringBuilder hexString = new StringBuilder();
+            for (byte b : hash) {
+                String hex = Integer.toHexString(0xff & b);
+                if (hex.length() == 1) hexString.append('0');
+                hexString.append(hex);
+            }
+            return hexString.toString();
+        } catch (java.security.NoSuchAlgorithmException e) {
+            throw new RuntimeException("Error hashing token", e);
+        }
+    }
+
+    @Transactional
+    public void revokeUserTokens(Long userId) {
+        refreshTokenRepository.revokeAllUserTokens(userId);
+
     }
 }

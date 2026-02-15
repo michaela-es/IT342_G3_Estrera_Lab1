@@ -1,0 +1,117 @@
+@import url('colors.css');
+
+.forbidden-page {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  position: relative;
+  left: 0;
+  right: 0;
+  padding: clamp(1rem, 3vw, 2rem);
+}
+
+.forbidden-container {
+  background: var(--bg-container);
+  border-radius: clamp(1.5rem, 3vw, 2.5rem);
+  padding: clamp(2rem, 5vh, 4rem);
+  text-align: center;
+  width: min(90%, 800px);  
+  box-shadow: 0 2vh 4vh rgba(0, 0, 0, 0.3);
+}
+
+.forbidden-code {
+  font-size: clamp(5rem, 20vw, 10rem);  
+  font-weight: bold;
+  background: var(--btn-primary);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  line-height: 1;
+  margin-bottom: clamp(1rem, 3vh, 2rem);
+}
+
+.forbidden-title {
+  font-size: clamp(1.5rem, 5vw, 2.5rem);
+  color: var(--text-primary);
+  margin-bottom: clamp(1rem, 2.5vh, 1.5rem);
+}
+
+.forbidden-message {
+  color: var(--text-secondary);
+  margin-bottom: clamp(1.5rem, 4vh, 2.5rem);
+  line-height: 1.6;
+  font-size: clamp(0.875rem, 2vw, 1.125rem);
+  max-width: 600px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.forbidden-actions {
+  display: flex;
+  gap: clamp(0.75rem, 2vw, 1.5rem);
+  justify-content: center;
+  flex-wrap: wrap;  
+}
+
+.forbidden-btn {
+  padding: clamp(0.75rem, 2vh, 1rem) clamp(1.5rem, 3vw, 2.5rem);
+  border-radius: clamp(0.5rem, 1vw, 0.875rem);
+  font-size: clamp(0.875rem, 2vw, 1rem);
+  font-weight: 600;
+  text-decoration: none;
+  transition: transform 0.2s, box-shadow 0.2s;
+  display: inline-block;
+  border: none;
+  cursor: pointer;
+}
+
+.forbidden-btn.primary {
+  background: var(--btn-primary);
+  color: var(--text-white);
+}
+
+.forbidden-btn.secondary {
+  background: var(--bg-input-disabled);
+  color: var(--text-secondary);
+  border: 1px solid var(--border-light);
+}
+
+.forbidden-btn:hover {
+  transform: translateY(-0.2vh);
+  box-shadow: 0 1vh 2vh var(--shadow-color-hover);
+}
+
+.forbidden-btn.primary:hover {
+  background: var(--btn-primary-hover);
+}
+
+.forbidden-btn.secondary:hover {
+  background: var(--border-light);
+}
+
+@media (max-width: 480px) {
+  .forbidden-actions {
+    flex-direction: column;
+    width: 100%;
+  }
+  
+  .forbidden-btn {
+    width: 100%;
+    text-align: center;
+  }
+  
+  .forbidden-container {
+    padding: clamp(1.5rem, 4vh, 2rem);
+  }
+}
+
+@media (min-width: 1200px) {
+  .forbidden-container {
+    max-width: 900px;
+  }
+  
+  .forbidden-code {
+    font-size: 8rem;
+  }
+}
