@@ -1,0 +1,119 @@
+.profile-page {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--bg-page);
+  padding: 20px;
+}
+
+.profile-container {
+  width: 100%;
+  max-width: 600px;
+}
+
+.profile-card {
+  background: var(--bg-container);
+  border-radius: 20px;
+  padding: 40px;
+  box-shadow: 0 20px 60px var(--shadow-color);
+  border: 1px solid var(--border-light);
+}
+
+.profile-header {
+  text-align: center;
+  margin-bottom: 0;
+}
+
+.profile-avatar {
+  width: 100px;
+  height: 100px;
+  background: var(--btn-primary);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 0;
+  color: var(--text-white);
+  font-size: 40px;
+  font-weight: bold;
+}
+
+.profile-name {
+  font-size: 28px;
+  color: var(--text-title);
+  margin-bottom: 0;
+}
+
+.profile-email {
+  color: var(--text-secondary);
+  font-size: 16px;
+  margin-bottom: 0;
+}
+
+.profile-details {
+  border-top: 2px solid var(--border-divider);
+  border-bottom: 2px solid var(--border-divider);
+  padding: 20px 0;
+  margin-bottom: 0;
+}
+
+.detail-item {
+  display: flex;
+  justify-content: space-between;
+  padding: 10px 0;
+}
+
+.detail-label {
+  color: var(--text-secondary);
+  font-weight: 500;
+}
+
+.detail-value {
+  color: var(--text-primary);
+  font-weight: 600;
+}
+
+.status-active {
+  color: var(--success-color);
+}
+
+.status-inactive {
+  color: var(--error-color);
+}
+
+.profile-actions {
+  display: flex;
+  justify-content: center;
+  margin-top: 12px;
+  margin-bottom: 0;
+}
+
+.logout-btn {
+  background: var(--btn-primary);
+  color: var(--text-white);
+  border: none;
+  padding: 12px 30px;
+  border-radius: 8px;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  margin-top: 1em;
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.logout-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 20px var(--shadow-color-hover);
+  background: var(--btn-primary-hover);
+}
+
+.loading-container {
+  text-align: center;
+  color: var(--text-white);
+  font-size: 18px;
+}
+
+.h1{
+    margin-bottom: 0;
+}
