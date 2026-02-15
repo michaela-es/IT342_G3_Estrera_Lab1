@@ -76,10 +76,6 @@ public class UserService {
             throw new IllegalArgumentException("Invalid credentials");
         }
 
-        if (!user.getEnabled()) {
-            throw new IllegalArgumentException("Account not verified");
-        }
-
         user.setLast_login(LocalDateTime.now());
         userRepository.save(user);
 
