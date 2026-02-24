@@ -1,4 +1,4 @@
-package com.example.estrera
+package com.systems.mobileauth
 
 import android.os.Bundle
 import androidx.activity.enableEdgeToEdge
