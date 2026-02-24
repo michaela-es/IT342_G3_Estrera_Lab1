@@ -63,10 +63,17 @@ curl -X POST http://localhost:8080/api/auth/login \
       }'
 ```
 
----
 
 ### 3. Get current user (protected)
 
 **GET** `/api/user/me`
 
-TBA
+Returns the current logged-in user.
+Example placeholder response:
+
+{
+  "username": "username",
+  "enabled": boolean,
+  "email": "youremail@gmail.com"
+}
+---
