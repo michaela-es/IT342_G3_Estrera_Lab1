@@ -1,5 +1,34 @@
-<?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="black">#FF000000</color>
-    <color name="white">#FFFFFFFF</color>
+    <color name="primary_gradient_start">#486881</color>
+    <color name="primary_gradient_end">#BDBDBD</color>
+    <color name="primary_color">#4F46E5</color>
+
+    <color name="bg_page">#FFFFF0</color>
+    <color name="bg_container">#ffffff</color>
+    <color name="bg_form">#ffffff</color>
+    <color name="bg_input">#ffffff</color>
+    <color name="bg_input_disabled">#f5f5f5</color>
+    <color name="bg_error">#f8d7da</color>
+
+    <color name="text_primary">#333333</color>
+    <color name="text_secondary">#666666</color>
+    <color name="text_light">#6B7280</color>
+    <color name="text_white">#ffffff</color>
+    <color name="text_error">#721c24</color>
+    <color name="text_title">#000000</color>
+
+    <color name="border_light">#e5e7eb</color>
+    <color name="border_default">#e0e0e0</color>
+    <color name="border_focus">#667eea</color>
+    <color name="border_error">#f5c6cb</color>
+    <color name="border_divider">#f0f0f0</color>
+
+    <color name="shadow_color">#1a000000</color>
+    <color name="shadow_hover">#4c667eea</color>
+
+    <color name="btn_primary_start">#486881</color>
+    <color name="btn_primary_end">#19135f</color>
+    <color name="btn_disabled_opacity">#b3ffffff</color>
+
+    <color name="link_color">#284c52</color>
 </resources>
